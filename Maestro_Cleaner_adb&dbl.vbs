@@ -1,6 +1,9 @@
 
 '-------------------------Скрипт очистки папки с проектами Maestro от файлов ADB и DBL---------------------------
 'Версия 1.0
+'Версия 2.0		Поиск и удаление файлов adb и dbl во всей иерархии подкаталогов 
+'Версия 2.1		Исправлена ошибка в процедуре CheckSubFolders 
+
 '================================================================================================================
 
 '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -88,14 +91,16 @@ if FSO.FolderExists(path_Maestro_Project) = FALSE then				'Проверка существовани
 	WScript.Quit								'Завершение скрипта и вывод сообщения, если каталог не существует
 End if
 
-Set Folder = FSO.GetFolder(path_Maestro_Project)
-For Each FilePath In Folder.Files						'Цикл обработки файлов в корне каталога с проектами
-	check_and_delete(FilePath)
-Next
+CheckSubFolders FSO.GetFolder(path_Maestro_Project)
 
-For Each subfolder In Folder.SubFolders						'Цикл обработки подкаталогов
-	Set Folder = FSO.GetFolder(subfolder)
-	For Each FilePath In Folder.Files					'Цикл обработки файлов в подкаталогах
-		check_and_delete(FilePath)
+Sub CheckSubFolders(Folder)										'Процедура обработки каталога
+	For Each subfolder In Folder.SubFolders						'Цикл обработки подкаталогов
+		'WScript.Echo subfolder
+		For Each FilePath In subfolder.Files						'Цикл обработки файлов в каталоге
+			check_and_delete(FilePath)							'Обращение к функции проверки и удаления файла
+		Next
+
+		CheckSubFolders subfolder								'Вызов процедуры обработки подкаталога текущего каталога
+
 	Next
-Next
+End Sub
