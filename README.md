@@ -1,7 +1,10 @@
 # Сценарий очистки Maestro\Projects от файлов ADB и DBL
   
 ## Использование
-Скачайте и разместите файл `Maestro_Cleaner_adb&dbl.vbs` на рабочем столе или в автозапуске
+1. Скачайте архив, используя ссылку [Clone or download - Download ZIP](https://github.com/demonlibra/phpBB-ext-sitemaker-3.2-translate-rus/archive/master.zip).  
+2. Извлеките файл `Maestro_Cleaner_adb&dbl.vbs` и разместите его
+   * на рабочем столе - для ручного запуска
+   * или в автозапуске - для автоматической запуска при каждом включении станка.
 
 ## Параметры
 В начале файла указаны основные параметры.  
@@ -20,7 +23,10 @@
 # Script to clean Maestro\Projects from ADB and DBL files
 
 ## Use
-Dowload and put file `Maestro_Cleaner_adb&dbl.vbs` on Desktop or Startup menu.
+1. Dowload archive [Clone or download - Download ZIP](https://github.com/demonlibra/phpBB-ext-sitemaker-3.2-translate-rus/archive/master.zip).  
+2. Extract the file `Maestro_Cleaner_adb&dbl.vbs` and put it on the 
+   * Desktop (for manual launch)
+   * or Startup menu (for automatic launch every time the machine is turned on).
 
 ## Parameters
 You can open the file `Maestro_Cleaner_adb&dbl.vbs` in any text editor, for example in Notepad.  
