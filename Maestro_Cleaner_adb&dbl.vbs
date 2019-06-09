@@ -129,7 +129,7 @@ Sub CheckSubFolders(Folder)							'Процедура обработки каталога
 	For Each subfolder In Folder.SubFolders					'Цикл обработки подкаталогов
 		'WScript.Echo subfolder
 		For Each FilePath In subfolder.Files				'Цикл обработки файлов в каталоге
-			check_filter_and_delete(FilePath)			'Обращение к функции проверки и удаления файла
+			check_filter_and_delete(FilePath)			'Обращение к процедуре проверки и удаления файла
 		Next
 
 		CheckSubFolders subfolder					'Вызов процедуры обработки подкаталога текущего каталога
