@@ -1,4 +1,3 @@
-
 '-------------------------Скрипт очистки папки с проектами Maestro от файлов ADB и DBL---------------------------
 'Версия 1.0
 'Версия 2.0		Поиск и удаление файлов adb и dbl во всей иерархии подкаталогов.
@@ -6,7 +5,8 @@
 'Версия 2.2		Исправлена ошибка: файлы проверяются только в подкаталогах.
 'Версия 2.3		Добавлена возможность сохранять отчет об удаленных файлах.
 'Версия 2.4		Добавлена строка с путем для старых станков с 32-х разрядной операционной системой.
-'Версия 2.5		Вместо сравнения переменных используется регулярное выражение.
+'Версия 2.5		Вместо сравнение переменных используется регулярное выражение.
+'Версия 2.6		Использование переменной с именем filter вызывала ошибку.
 '================================================================================================================
 
 '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -17,8 +17,8 @@
 path_Maestro_Project = "C:\Program Files (x86)\Scm Group\Maestro\Projects"	'Каталог с проектами Maestro
 'path_Maestro_Project = "C:\Program Files\Scm Group\Maestro\Projects"		'Каталог с проектами Maestro для 32-х разрядных операционных систем
 
-mask = "(_adb.|_dbl.)"								'Регулярное выражение для поиска совпадений
-										'Строки для поиска в имени файлов разделять вертикальной чертой
+delete_filter="(_adb.|_dbl.|.epl\b|.xxl\b|.log\b|.pgm\b)"					'Регулярное выражение для поиска совпадений	
+																			'Строки для поиска в имени файлов разделять вертикальной чертой
 
 create_log = FALSE								'Создать файл отчета (лог)? Впишите "TRUE" для создания файла отчета
 path_log = "C:\Program Files (x86)\Scm Group\Maestro\Projects\cleaner_log.txt"	'Путь к файлу отчета
@@ -80,14 +80,13 @@ path_log = "C:\Program Files (x86)\Scm Group\Maestro\Projects\cleaner_log.txt"	'
 
 '===========================================================================
 Set FSO = CreateObject("Scripting.FileSystemObject")
-
-Set RegExp = CreateObject("VBScript.RegExp")					'Создание объекта "Регулярное выражение"
-RegExp.Pattern = mask								'Присвоение маски регулярному выражению
-RegExp.IgnoreCase = TRUE							'Игнорировать регистр в регулярном выражении 
+Set RegExp = CreateObject("VBScript.RegExp")
+RegExp.Pattern = delete_filter
 
 '--------------------------------------------------------------------------------Процедура проверки соответствий файла фильтрам и удаления файла
 Sub check_filter_and_delete (FilePath)
-	if RegExp.Test(FilePath) Then						'Проверка имени файла на соответствие шаблону
+	check = RegExp.Test(FilePath)
+	if check = TRUE Then											'Проверка соответствия фильтрам
 
 		if create_log = TRUE Then
 			log_file.WriteLine(date & " " & time & " " & FilePath)	'Запись в лог полного пути к файлу, если переменная "create_log = TRUE"
@@ -101,7 +100,7 @@ End Sub
 
 
 '--------------------------------------------------------------------------------Проверка существования каталога с проектами Maestro
-if FSO.FolderExists(path_Maestro_Project) = FALSE Then
+if FSO.FolderExists(path_Maestro_Project) = FALSE Then				
 	MsgBox "Не существует каталог:" & vbNewLine & _
 		path_Maestro_Project & vbNewLine & _
 		vbNewLine & "Проверьте параметр:" & vbNewLine & _
@@ -114,15 +113,15 @@ End if
 
 '--------------------------------------------------------------------------------Создание файла лога
 if create_log = TRUE Then
-	Set log_file = FSO.OpenTextFile(path_log,8,True)
+	Set log_file = FSO.OpenTextFile(path_log,8,True)			
 End if
 '-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 '-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Set Folder = FSO.GetFolder(path_Maestro_Project)
+Set Folder = FSO.GetFolder(path_Maestro_Project)				
 For Each FilePath In Folder.Files						'Цикл обработки файлов в каталоге "Projects"
-	check_filter_and_delete(FilePath)					'Обращение к процедуре проверки и удаления файла
+	check_filter_and_delete(FilePath)					'Обращение к функции проверки и удаления файла
 Next
 '-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -134,7 +133,7 @@ Sub CheckSubFolders(Folder)							'Процедура обработки каталога
 	For Each subfolder In Folder.SubFolders					'Цикл обработки подкаталогов
 		'WScript.Echo subfolder
 		For Each FilePath In subfolder.Files				'Цикл обработки файлов в каталоге
-			check_filter_and_delete(FilePath)			'Обращение к процедуре проверки и удаления файла
+			check_filter_and_delete(FilePath)			'Обращение к функции проверки и удаления файла
 		Next
 
 		CheckSubFolders subfolder					'Вызов процедуры обработки подкаталога текущего каталога
